@@ -30,6 +30,11 @@ class User(AbstractUser):
     def __str__(self):
         return self.phone_number or self.email or "Unknown User"
     
+    def save(self, *args, **kwargs):
+        if not self.username and self.email:
+            self.username = self.email
+        super().save(*args, **kwargs)
+    
 # class Category(models.Model):
 #     category_name = models.CharField(max_length=100)
 #     description = models.TextField(max_length=150)

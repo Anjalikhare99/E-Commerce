@@ -981,8 +981,7 @@
                                             <div class="col-sm-6">
                                                 <a href="{% url 'social:begin' 'google-oauth2' %}"
                                                     class="btn btn-login btn-g">
-                                                    <i class="icon-google"></i>
-                                                    Login With Google
+                                                    <i class="icon-google"></i> Login With Google
                                                 </a>
                                             </div><!-- End .col-6 -->
                                         </div><!-- End .row -->
@@ -1084,41 +1083,41 @@
     </script>
 
     <script>
-  document.getElementById("login-form").addEventListener("submit", function (e) {
-    e.preventDefault();
+        document.getElementById("login-form").addEventListener("submit", function (e) {
+            e.preventDefault();
 
-    const identifier = document.getElementById("login-identifier").value;
-    const otp = document.getElementById("otp")?.value || "";
-    console.log("OTP sent by user:", otp);
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    const messageBox = document.getElementById("login-message");
+            const identifier = document.getElementById("login-identifier").value;
+            const otp = document.getElementById("otp")?.value || "";
+            console.log("OTP sent by user:", otp);
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const messageBox = document.getElementById("login-message");
 
-    fetch("{% url 'login' %}", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "X-CSRFToken": csrfToken
-      },
-      body: `identifier=${encodeURIComponent(identifier)}&otp=${encodeURIComponent(otp)}`
-    })
-    .then(res => res.json())
-    .then(data => {
-      messageBox.style.display = "block";
-      messageBox.textContent = data.message;
+            fetch("{% url 'login' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrfToken
+                },
+                body: `identifier=${encodeURIComponent(identifier)}&otp=${encodeURIComponent(otp)}`
+            })
+                .then(res => res.json())
+                .then(data => {
+                    messageBox.style.display = "block";
+                    messageBox.textContent = data.message;
 
-      if (data.status === "otp_sent") {
-        document.getElementById("otp-input-box").style.display = "block";
-        messageBox.className = "text-success text-center mt-2";
-      } else if (data.status === "success") {
-        messageBox.className = "text-success text-center mt-2";
-        $('#signin-modal').modal('hide');
-        location.reload();  // refresh page to update navbar
-      } else {
-        messageBox.className = "text-danger text-center mt-2";
-      }
-    });
-  });
-</script>
+                    if (data.status === "otp_sent") {
+                        document.getElementById("otp-input-box").style.display = "block";
+                        messageBox.className = "text-success text-center mt-2";
+                    } else if (data.status === "success") {
+                        messageBox.className = "text-success text-center mt-2";
+                        $('#signin-modal').modal('hide');
+                        location.reload();  // refresh page to update navbar
+                    } else {
+                        messageBox.className = "text-danger text-center mt-2";
+                    }
+                });
+        });
+    </script>
 
 </body>
 
