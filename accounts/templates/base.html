@@ -908,7 +908,7 @@
                             <div class="tab-content" id="tab-content-5">
                                 <div class="tab-pane fade show active" id="signin" role="tabpanel"
                                     aria-labelledby="signin-tab">
-                                    <form method="POST" id="login-form">
+                                    <form method="POST" id="login-form" action="{% url 'login' %}">
                                         {% csrf_token %}
                                         <div class="form-group">
                                             <label for="login-identifier">Phone or Email *</label>
@@ -958,7 +958,7 @@
                                         {% csrf_token %}
                                         <div class="form-group">
                                             <label for="register-phone">Phone Number *</label>
-                                            <input type="text" class="form-control" id="register-phone" name="phone"
+                                            <input type="text" class="form-control" id="register-phone" name="phone_or_email"
                                                 required>
                                         </div>
 
@@ -1055,7 +1055,7 @@
                     "Content-Type": "application/x-www-form-urlencoded",
                     "X-CSRFToken": csrfToken
                 },
-                body: `phone=${encodeURIComponent(phone)}&otp=${encodeURIComponent(otp)}`
+                body: `phone_or_email=${encodeURIComponent(phone)}&otp=${encodeURIComponent(otp)}`
             })
                 .then(res => res.json())
                 .then(data => {

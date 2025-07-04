@@ -11,24 +11,44 @@ import random
 @csrf_exempt
 def signup_view(request):
     if request.method == "POST":
-        phone = request.POST.get("phone", "").strip()
+        identifier = request.POST.get("phone_or_email", "").strip()
         otp = request.POST.get("otp", "").strip()
         role = request.GET.get("role", "C")
 
-        if not phone:
-            return JsonResponse({"status": "error", "message": "Phone number required"}, status=400)
+        if not identifier:
+            return JsonResponse({"status": "error", "message": "Phone number or email required"}, status=400)
+
+        # Check if identifier is email or phone
+        is_email = "@" in identifier and "." in identifier  # simple email check
 
         try:
-            user = User.objects.get(phone_number=phone)
+            if is_email:
+                user = User.objects.get(email=identifier)
+            else:
+                user = User.objects.get(phone_number=identifier)
         except User.DoesNotExist:
             user = None
 
         if not otp:
+            if user:
+                return JsonResponse({"status": "error", "message": "User already registered, please login"}, status=400)
+            
             generated_otp = random.randint(100000, 999999)
-            if not user:
+
+            if is_email:
                 user = User.objects.create(
-                    phone_number=phone,
-                    username=phone,
+                    email=identifier,
+                    username=identifier,
+                    name="Guest",
+                    role=role,
+                    gender="O",
+                    password=make_password("temp1234"),
+                    is_active=False
+                )
+            else:
+                user = User.objects.create(
+                    phone_number=identifier,
+                    username=identifier,
                     name="Guest",
                     role=role,
                     gender="O",
@@ -37,7 +57,7 @@ def signup_view(request):
                 )
             user.otp = generated_otp
             user.save()
-            print(f"OTP sent to {phone}: {generated_otp}")
+            print(f"OTP sent to {identifier}: {generated_otp}")
             return JsonResponse({"status": "otp_sent", "message": "OTP sent successfully"})
 
         if user and str(user.otp) == otp:
@@ -45,6 +65,8 @@ def signup_view(request):
             user.is_active = True
             user.password = make_password("default1234")
             user.save()
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
             return JsonResponse({"status": "success", "message": "Signup complete"})
 
         return JsonResponse({"status": "error", "message": "Invalid OTP"}, status=400)
@@ -53,6 +75,9 @@ def signup_view(request):
 
 @csrf_exempt
 def login_view(request):
+    if request.method == "GET":
+        return render(request, "index.html")
+    
     if request.method == "POST":
         identifier = request.POST.get("identifier", "").strip()
         otp = request.POST.get("otp", "").strip()
@@ -75,6 +100,7 @@ def login_view(request):
             user.otp = None
             user.save()
             user.backend = 'django.contrib.auth.backends.ModelBackend'
+            print("Logged in user:", request.user)
             login(request, user)
             return JsonResponse({"status": "success", "message": "Login successful"})
 

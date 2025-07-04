@@ -11,6 +11,8 @@ class EmailOrPhoneBackend(ModelBackend):
                 user = User.objects.get(phone_number=username)
             except User.DoesNotExist:
                 return None
+        except User.MultipleObjectsReturned:
+            return None
 
         if user and user.check_password(password):
             return user
