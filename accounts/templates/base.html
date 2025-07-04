@@ -77,7 +77,13 @@
                                             {% else %}
                                             <i class="icon-user"></i>
                                             {% endif %}
-                                            {{ user.name|default:user.phone_number }}
+                                            {% if user.name %}
+                                            {{ user.name }}
+                                            {% elif user.first_name or user.last_name %}
+                                            {{ user.first_name }} {{ user.last_name }}
+                                            {% else %}
+                                            {{ user.phone_number }}
+                                            {% endif %}
                                         </a>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="#">My Profile</a>
@@ -958,8 +964,8 @@
                                         {% csrf_token %}
                                         <div class="form-group">
                                             <label for="register-phone">Phone Number *</label>
-                                            <input type="text" class="form-control" id="register-phone" name="phone_or_email"
-                                                required>
+                                            <input type="text" class="form-control" id="register-phone"
+                                                name="phone_or_email" required>
                                         </div>
 
                                         <div class="form-group" id="otp-container" style="display: none;">
