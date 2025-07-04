@@ -36,12 +36,12 @@ def signup_view(request):
             generated_otp = random.randint(100000, 999999)
 
             if is_email:
+                name_part = identifier.split("@")[0]
                 user = User.objects.create(
                     email=identifier,
                     username=identifier,
-                    name="Guest",
+                    name=name_part,
                     role=role,
-                    gender="O",
                     password=make_password("temp1234"),
                     is_active=False
                 )
@@ -51,7 +51,6 @@ def signup_view(request):
                     username=identifier,
                     name="Guest",
                     role=role,
-                    gender="O",
                     password=make_password("temp1234"),
                     is_active=False
                 )
