@@ -152,6 +152,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_user',
     'accounts.pipeline.prevent_auto_associate_by_uid',
     'accounts.pipeline.get_or_create_user_by_email',
+    'accounts.pipeline.set_default_role',
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',

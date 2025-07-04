@@ -40,10 +40,13 @@ def prevent_auto_associate_by_uid(backend, uid, user=None, *args, **kwargs):
     if user:
         return {'user': user}
 
-    # If no user, try to find existing social auth
     social = backend.strategy.storage.user.get_social_auth(backend.name, uid)
     if social:
         return {'user': social.user}
 
     return {'user': None}
 
+def set_default_role(backend, user, response, *args, **kwargs):
+    if not user.role:
+        user.role = 'C'
+        user.save()
