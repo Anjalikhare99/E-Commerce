@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h2>Add New Address</h2>
+<ul>
+    {% for address in addresses %}
+        <li>
+            <strong>{{ address.name }}</strong><br>
+            {{ address.house_flat_no }}, {{ address.colony_area }}<br>
+            {{ address.city }}, {{ address.state }}, {{ address.country }} - {{ address.pincode }}<br>
+            Type: {{ address.get_address_type_display }}
+        </li>
+    {% empty %}
+        <li>No addresses found.</li>
+    {% endfor %}
+</ul>
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="text" name="name" placeholder="Name" value="{{ values.name }}" required>
+    {% if errors.name %}<p style="color:red;">{{ errors.name }}</p>{% endif %}
+
+    <select name="address_type" required>
+        <option value="">Select Address Type</option>
+        <option value="H" {% if values.address_type == 'H' %}selected{% endif %}>Home</option>
+        <option value="W" {% if values.address_type == 'W' %}selected{% endif %}>Work</option>
+        <option value="O" {% if values.address_type == 'O' %}selected{% endif %}>Other</option>
+    </select>
+    {% if errors.address_type %}<p style="color:red;">{{ errors.address_type }}</p>{% endif %}
+
+    <input type="number" name="pincode" placeholder="Pincode" value="{{ values.pincode }}" required>
+    {% if errors.pincode %}<p style="color:red;">{{ errors.pincode }}</p>{% endif %}
+
+    <input type="text" name="house_or_flat_number" placeholder="House/Flat No."
+        value="{{ values.house_or_flat_number }}" required>
+    {% if errors.house_or_flat_number %}<p style="color:red;">{{ errors.house_or_flat_number }}</p>{% endif %}
+
+    <input type="text" name="colony_or_area" placeholder="Colony/Area" value="{{ values.colony_or_area }}">
+
+    <select id="country" name="country" required>
+        <option value="">Select Country</option>
+    </select>
+
+    <select id="state" name="state" required>
+        <option value="">Select State</option>
+    </select>
+
+    <select id="city" name="city" required>
+        <option value="">Select City</option>
+    </select>
+    <input type="text" name="landmark" placeholder="Landmark (optional)" value="{{ values.landmark }}">
+
+    <button type="submit">Save Address</button>
+</form>
+
+<script>
+    let countries = []
+    let states = []
+    let cities = []
+
+    Promise.all([
+        fetch("{% static 'MyJson/countries.json' %}").then(res => res.json()),
+        fetch("{% static 'MyJson/states.json' %}").then(res => res.json()),
+        fetch("{% static 'MyJson/cities.json' %}").then(res => res.json())
+    ]).then(([countryData, stateData, cityData]) => {
+    countries = countryData;
+    states = stateData;
+    cities = cityData;
+
+    populateCountries();
+    });
+
+    function populateCountries(){
+        const countrySelect = document.getElementById("country");
+        countries.forEach(country => {
+            const option = document.createElement("option");
+            option.value = country.id;
+            option.text = country.name;
+            countrySelect.appendChild(option);
+        });
+    }
+
+    document.getElementById("country").addEventListener("change", function(){
+        const selectedCountryId  = parseInt(this.value);
+        const filteredStates = states.filter(state => state.country_id === selectedCountryId);
+
+        const stateSelect = document.getElementById("state");
+        const citySelect = document.getElementById("city");
+
+        stateSelect.innerHTML = '<option value="">Select State </option>';
+        citySelect.innerHTML = '<option value="">Select City</option>';
+
+        filteredStates.forEach(state => {
+            const option = document.createElement("option");
+            option.value = state.id;
+            option.text = state.name;
+            stateSelect.appendChild(option);
+        });
+    });
+
+    document.getElementById("state").addEventListener("change", function(){
+        const selectedStateId = parseInt(this.value);
+        const filteredCities = cities.filter(city => city.state_id === selectedStateId);
+
+        const citySelect = document.getElementById("city");
+        citySelect.innerHTML = '<option value=""> Select City</option>';
+
+        filteredCities.forEach(city => {
+            const option = document.createElement("option");
+            option.value = city.name;
+            option.text = city.name;
+            citySelect.appendChild(option);
+        });
+    });
+</script>
+{% endblock %}

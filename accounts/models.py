@@ -34,7 +34,28 @@ class User(AbstractUser):
         if not self.username and self.email:
             self.username = self.email
         super().save(*args, **kwargs)
-    
+
+class Address(models.Model):
+    ADDRESS_TYPE = [
+        ("H", "Home"),
+        ("W", "Work"),
+        ("O", "Other"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    address_type = models.CharField(max_length=1, choices=ADDRESS_TYPE)
+    pincode = models.IntegerField()
+    house_or_flat_number = models.CharField(max_length=255)
+    colony_or_area = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    landmark = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.city}"
+
 # class Category(models.Model):
 #     category_name = models.CharField(max_length=100)
 #     description = models.TextField(max_length=150)

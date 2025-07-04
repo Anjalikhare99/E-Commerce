@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
 import random
+from django.contrib.auth.decorators import login_required
 
 @csrf_exempt
 def signup_view(request):
@@ -113,3 +114,66 @@ def logout_view(request):
 
 def index(request):
     return render(request, 'index.html')
+
+def about_as(request):
+    return render(request, 'about.html')
+
+def contact_as(request):
+    return render(request, 'contact.html')
+
+@login_required
+def address(request):
+    if request.method == 'GET':
+        addresses = Address.objects.filter(user=request.user)
+        print(addresses,"lllllllllllllllllllllllll")
+        return render(request, 'address.html', {"addresses": addresses})
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        address_type = request.POST.get('address_type')
+        pincode = request.POST.get('pincode')
+        house_or_flat_number = request.POST.get('house_or_flat_number')
+        colony_or_area = request.POST.get('colony_or_area')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        country = request.POST.get('country')
+        landmark = request.POST.get('landmark')
+
+        errors = {}
+
+        if not name:
+            errors['name'] = "Name is required."
+        if not address_type:
+            errors['address_type'] = "Address type is required."
+        if not pincode:
+            errors['pincode'] = "Pincode is required."
+        if not house_or_flat_number:
+            errors['house_or_flat_number'] = "House/Flat number is required."
+        if not city:
+            errors['city'] = "City is required."
+        if not state:
+            errors['state'] = "State is required."
+        if not country:
+            errors['country'] = "Country is required."
+
+        if errors:
+            return render(request, 'address.html', {
+                'errors': errors,
+                'values': request.POST,
+            })
+
+        Address.objects.create(
+            user=request.user,
+            name=name,
+            address_type=address_type,
+            pincode=pincode,
+            house_or_flat_number=house_or_flat_number,
+            colony_or_area=colony_or_area,
+            city=city,
+            state=state,
+            country=country,
+            landmark=landmark
+        )
+        return redirect('address')  # Or wherever you want to go after saving
+
+    return render(request, 'address.html')
