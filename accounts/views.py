@@ -125,7 +125,6 @@ def contact_as(request):
 def address(request):
     if request.method == 'GET':
         addresses = Address.objects.filter(user=request.user)
-        print(addresses,"lllllllllllllllllllllllll")
         return render(request, 'address.html', {"addresses": addresses})
     
     if request.method == 'POST':
@@ -177,3 +176,46 @@ def address(request):
         return redirect('address')  # Or wherever you want to go after saving
 
     return render(request, 'address.html')
+
+def category_list_view(request):
+    categories = Category.objects.all()
+    return render(request, "category.html", {
+        "categories": categories
+    })
+
+@login_required
+def add_category_view(request):
+    if request.user.role != 'S':
+        return redirect("home")
+
+    errors = {}
+    values = {}
+
+    if request.method == "POST":
+        category_name = request.POST.get("category_name", "").strip()
+        description = request.POST.get("description", "").strip()
+        image = request.FILES.get("image")
+
+        values = {
+            "category_name": category_name,
+            "description": description,
+        }
+
+        if not category_name:
+            errors["category_name"] = "Category name is required"
+        if not image:
+            errors["image"] = "Image is required"
+
+        if not errors:
+            Category.objects.create(
+                user=request.user,
+                category_name=category_name,
+                description=description,
+                image=image
+            )
+            return redirect("category")
+
+    return render(request, "categories/add_category.html", {
+        "errors": errors,
+        "values": values
+    })

@@ -56,14 +56,16 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.name} - {self.city}"
 
-# class Category(models.Model):
-#     category_name = models.CharField(max_length=100)
-#     description = models.TextField(max_length=150)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     update_at = models.DateTimeField(auto_now=True)
+class Category(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category_name = models.CharField(max_length=100)
+    description = models.TextField(max_length=150, null=True, blank=True)
+    image = models.ImageField(upload_to="category_images/")
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
-#     def __str__(self):
-#         return self.category_name
+    def __str__(self):
+        return self.category_name
     
 # class SubCategory(models.Model):
 #     category_name = models.ForeignKey(Category, on_delete=models.CASCADE)
