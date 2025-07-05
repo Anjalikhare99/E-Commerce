@@ -4,14 +4,14 @@
 <h2>Add New Address</h2>
 <ul>
     {% for address in addresses %}
-        <li>
-            <strong>{{ address.name }}</strong><br>
-            {{ address.house_flat_no }}, {{ address.colony_area }}<br>
-            {{ address.city }}, {{ address.state }}, {{ address.country }} - {{ address.pincode }}<br>
-            Type: {{ address.get_address_type_display }}
-        </li>
+    <li>
+        <strong>{{ address.name }}</strong><br>
+        {{ address.house_flat_no }}, {{ address.colony_area }}<br>
+        {{ address.city }}, {{ address.state }}, {{ address.country }} - {{ address.pincode }}<br>
+        Type: {{ address.get_address_type_display }}
+    </li>
     {% empty %}
-        <li>No addresses found.</li>
+    <li>No addresses found.</li>
     {% endfor %}
 </ul>
 <form method="POST">
@@ -22,9 +22,9 @@
 
     <select name="address_type" required>
         <option value="">Select Address Type</option>
-        <option value="H" {% if values.address_type == 'H' %}selected{% endif %}>Home</option>
-        <option value="W" {% if values.address_type == 'W' %}selected{% endif %}>Work</option>
-        <option value="O" {% if values.address_type == 'O' %}selected{% endif %}>Other</option>
+        <option value="H" {% if values.address_type=='H' %}selected{% endif %}>Home</option>
+        <option value="W" {% if values.address_type=='W' %}selected{% endif %}>Work</option>
+        <option value="O" {% if values.address_type=='O' %}selected{% endif %}>Other</option>
     </select>
     {% if errors.address_type %}<p style="color:red;">{{ errors.address_type }}</p>{% endif %}
 
@@ -63,14 +63,14 @@
         fetch("{% static 'MyJson/states.json' %}").then(res => res.json()),
         fetch("{% static 'MyJson/cities.json' %}").then(res => res.json())
     ]).then(([countryData, stateData, cityData]) => {
-    countries = countryData;
-    states = stateData;
-    cities = cityData;
+        countries = countryData;
+        states = stateData;
+        cities = cityData;
 
-    populateCountries();
+        populateCountries();
     });
 
-    function populateCountries(){
+    function populateCountries() {
         const countrySelect = document.getElementById("country");
         countries.forEach(country => {
             const option = document.createElement("option");
@@ -80,8 +80,8 @@
         });
     }
 
-    document.getElementById("country").addEventListener("change", function(){
-        const selectedCountryId  = parseInt(this.value);
+    document.getElementById("country").addEventListener("change", function () {
+        const selectedCountryId = parseInt(this.value);
         const filteredStates = states.filter(state => state.country_id === selectedCountryId);
 
         const stateSelect = document.getElementById("state");
@@ -98,7 +98,7 @@
         });
     });
 
-    document.getElementById("state").addEventListener("change", function(){
+    document.getElementById("state").addEventListener("change", function () {
         const selectedStateId = parseInt(this.value);
         const filteredCities = cities.filter(city => city.state_id === selectedStateId);
 

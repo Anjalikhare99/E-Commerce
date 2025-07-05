@@ -121,6 +121,9 @@ def about_as(request):
 def contact_as(request):
     return render(request, 'contact.html')
 
+def faq(request):
+    return render(request, 'faq.html')
+
 @login_required
 def address(request):
     if request.method == 'GET':
@@ -219,3 +222,18 @@ def add_category_view(request):
         "errors": errors,
         "values": values
     })
+
+def wishlist(request):
+    return render(request, 'wishlist.html')
+
+def cart(request):
+    return render(request, 'cart.html')
+
+def checkout(request):
+    return render(request, 'checkout.html')
+
+def dashboard(request):
+    return render(request, 'dashboard.html')
+
+def products(request):
+    return render(request, 'products.html')
