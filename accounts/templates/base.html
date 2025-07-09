@@ -63,7 +63,7 @@
                             <li>
                                 <a href="#">Links</a>
                                 <ul>
-                                    <li><a href="tel:#"><i class="icon-phone"></i>Call: +0123 456 789</a></li>
+                                    <li><a href="{% url 'seller' %}">Become a Seller</a></li>
                                     {% if user.is_authenticated %}
                                     <li>
                                         <a href="{% url 'wishlist' %}">

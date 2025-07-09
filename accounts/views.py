@@ -9,7 +9,6 @@ from django.contrib.auth import logout
 import random
 from django.contrib.auth.decorators import login_required
 
-@csrf_exempt
 def signup_view(request):
     if request.method == "POST":
         identifier = request.POST.get("phone_or_email", "").strip()
@@ -73,7 +72,7 @@ def signup_view(request):
 
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=405)
 
-@csrf_exempt
+
 def login_view(request):
     if request.method == "GET":
         return render(request, "index.html")
