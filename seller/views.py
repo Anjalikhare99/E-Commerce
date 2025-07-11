@@ -20,7 +20,6 @@ def send_otp(request):
 
         user, created = User.objects.get_or_create(phone_number=phone)
         user.otp = otp
-        user.otp_verified = False
         user.save()
 
         print("OTP for", phone, "is", otp)
@@ -57,8 +56,14 @@ def generate_password(length=10):
 def seller_signup(request):
     if request.method == "POST":
         phone = request.POST.get("phone")
+        print(request.POST,"fddddddddddddddddd")
 
         user, created = User.objects.get_or_create(phone_number=phone)
+
+        if not created and user.role == "S":
+            messages.error(request, "You are already registered as a seller.")
+            return redirect("sign-in")
+        
         if created:
             user.role = "S"
             password = generate_password()
@@ -82,7 +87,6 @@ def seller_signup(request):
         ifsc_code = request.POST.get("ifsc_code")
         account_holder_name = request.POST.get("account_holder_name")
         bank_name = request.POST.get("bank_name")
-        pickup_address = request.POST.get("pickup_address")
 
         Seller.objects.create(
             user=user,
@@ -99,10 +103,12 @@ def seller_signup(request):
             ifsc_code=ifsc_code,
             account_holder_name=account_holder_name,
             bank_name=bank_name,
-            pickup_address=pickup_address,
         )
 
         messages.success(request, "Seller registered successfully.")
-        return redirect("seller/index.html")
+        return redirect("index")
 
     return render(request, "seller/sign-up.html")
+
+def seller_signin(request):
+    return render(request, "seller/sign-in.html")

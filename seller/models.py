@@ -22,7 +22,6 @@ class Seller(models.Model):
     ifsc_code = models.CharField(max_length=15)
     account_holder_name = models.CharField(max_length=100)
     bank_name = models.CharField(max_length=100)
-    pickup_address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -6,11 +6,13 @@
         display: none !important;
     }
 </style>
+
 <div class="authentication">
     <div class="container">
         <div class="row">
             <div class="col-lg-4 col-sm-12">
-                <form class="card auth_form" action="{% url 'seller' %}" id="seller-signup-form" enctype="multipart/form-data" method="POST">
+                <form class="card auth_form" action="{% url 'seller' %}" id="seller-signup-form"
+                    enctype="multipart/form-data" method="POST">
                     {% csrf_token %}
                     <div class="header">
                         <img class="logo" src="{% static 'assets/images/logo.svg' %}" alt="">
@@ -20,13 +22,13 @@
                     <div class="body">
                         <div id="step-1">
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Enter Email">
+                                <input type="email" name="email" class="form-control" placeholder="Enter Email"
+                                    required>
                             </div>
                             <div class="position-relative mb-3">
                                 <input type="text" name="phone" id="phone-input" class="form-control pe-5"
                                     placeholder="Phone Number" required>
 
-                                <!-- This text will appear inside the input, right aligned -->
                                 <span id="verify-otp-btn" class="position-absolute" style="top: 50%; right: 15px; transform: translateY(-50%);
                             font-size: 14px; color: #007bff; cursor: pointer;
                             opacity: 0.5; pointer-events: none;">
@@ -156,30 +158,27 @@
     });
 </script>
 <script>
+    let otpIsVerified = false;
+
     document.addEventListener("DOMContentLoaded", function () {
         const phoneInput = document.getElementById("phone-input");
         const verifyBtn = document.getElementById("verify-otp-btn");
         const otpBoxes = document.getElementById("otp-boxes");
         const otpInputs = document.querySelectorAll(".otp-input");
+        const form = document.getElementById("seller-signup-form");
 
-        // Enable 'Verify OTP' button when a valid phone number is entered
+        // Enable verify button when valid phone number
         phoneInput.addEventListener("input", function () {
-            const isValid = /^\d{10}$/.test(phoneInput.value); // Validate 10-digit phone number
-            if (isValid) {
-                verifyBtn.style.opacity = "1";
-                verifyBtn.style.pointerEvents = "auto";
-            } else {
-                verifyBtn.style.opacity = "0.5";
-                verifyBtn.style.pointerEvents = "none";
-                otpBoxes.style.display = "none";  // Hide OTP inputs if phone number is invalid
-            }
+            const isValid = /^\d{10}$/.test(phoneInput.value);
+            verifyBtn.style.opacity = isValid ? "1" : "0.5";
+            verifyBtn.style.pointerEvents = isValid ? "auto" : "none";
+            if (!isValid) otpBoxes.style.display = "none";
         });
 
-        // Handle OTP send click event
+        // Send OTP
         verifyBtn.addEventListener("click", function () {
             const phone = phoneInput.value;
 
-            // Send OTP request to the server
             fetch("/seller/send_otp/", {
                 method: "POST",
                 headers: {
@@ -202,22 +201,19 @@
                 });
         });
 
-        // Handle OTP input focus and auto-submit
+        // OTP input handling
         otpInputs.forEach((input, index) => {
             input.addEventListener("input", function () {
-                // Auto-move focus to next OTP field after 1 digit
                 if (input.value.length === 1 && index < otpInputs.length - 1) {
                     otpInputs[index + 1].focus();
                 }
 
-                // Auto-verify OTP when all 6 digits are filled
                 const otp = Array.from(otpInputs).map(inp => inp.value.trim()).join('');
                 if (otp.length === 6 && /^\d{6}$/.test(otp)) {
-                    verifyOtp(otp);  // Call OTP verification function once all digits are filled
+                    verifyOtp(otp);
                 }
             });
 
-            // Move focus back when pressing Backspace
             input.addEventListener("keydown", function (e) {
                 if (e.key === "Backspace" && !input.value && index > 0) {
                     otpInputs[index - 1].focus();
@@ -225,7 +221,7 @@
             });
         });
 
-        // OTP verification function
+        // Verify OTP
         function verifyOtp(otp) {
             const phone = phoneInput.value;
 
@@ -240,34 +236,51 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === "success") {
+                        otpIsVerified = true;
+                        console.log("✅ OTP Verified, flag set:", otpIsVerified);
+
                         alert("✅ OTP Verified Successfully");
 
-                        // Disable OTP input fields and clear them
                         otpInputs.forEach(input => {
-                            input.value = '';  // Clear OTP inputs
-                            input.disabled = true;  // Disable OTP fields
+                            input.value = '';
+                            input.disabled = true;
                         });
 
-                        // Hide OTP boxes and disable the verify button
-                        otpBoxes.style.display = "none";  // Optionally hide OTP boxes after verification
-                        verifyBtn.style.pointerEvents = "none";  // Disable the "Verify OTP" button after verification
-                        verifyBtn.textContent = "OTP Verified";  // Change button text to "OTP Verified"
-
-                        // Optionally, proceed to the next step if needed (e.g., showing a success message)
+                        otpBoxes.style.display = "none";
+                        verifyBtn.style.pointerEvents = "none";
+                        verifyBtn.textContent = "OTP Verified";
                     } else {
                         alert("❌ Invalid OTP. Please try again.");
-                        // Optionally, clear the OTP inputs here
-                        otpInputs.forEach(input => input.value = '');  // Clear OTP fields on failure
+                        otpInputs.forEach(input => input.value = '');
                     }
                 })
                 .catch(error => {
                     console.error('Error verifying OTP:', error);
                 });
         }
-    });
 
+        // 🚀 Handle form submit
+        form.addEventListener("submit", function (e) {
+            console.log("Form submit clicked, otpIsVerified =", otpIsVerified);
 
-    document.addEventListener("DOMContentLoaded", function () {
+            if (!otpIsVerified) {
+                e.preventDefault();
+                alert("❌ Please verify your OTP before submitting the form.");
+                return;
+            }
+
+            const formData = new FormData(form);
+            for (let pair of formData.entries()) {
+                console.log(`${pair[0]} = ${pair[1]}`);
+            }
+
+            const submitBtn = form.querySelector("button[type='submit']");
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting...";
+            form.submit()
+        });
+
+        // Multi-step form handling
         const step1 = document.getElementById("step-1");
         const step2 = document.getElementById("step-2");
         const step3 = document.getElementById("step-3");
@@ -276,18 +289,16 @@
 
         nextBtn.addEventListener("click", function (e) {
             e.preventDefault();
-
             step1.style.display = "none";
             step2.style.display = "block";
         });
+
         nextBtn1.addEventListener("click", function (e) {
             e.preventDefault();
-
             step2.style.display = "none";
             step3.style.display = "block";
         });
     });
-
 </script>
 
 {% endblock %}
