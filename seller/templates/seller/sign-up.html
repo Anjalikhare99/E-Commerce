@@ -177,7 +177,8 @@
 
         // Send OTP
         verifyBtn.addEventListener("click", function () {
-            const phone = phoneInput.value;
+            const phone = document.getElementById("phone-input").value;
+            const email = document.querySelector('input[name="email"]').value;
 
             fetch("/seller/send_otp/", {
                 method: "POST",
@@ -185,7 +186,7 @@
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
-                body: `phone=${phone}`
+                body: `phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`
             })
                 .then(res => res.json())
                 .then(data => {
@@ -193,7 +194,8 @@
                         otpBoxes.style.setProperty("display", "flex", "important");
                         verifyBtn.textContent = "Resend OTP";
                     } else {
-                        alert("Failed to send OTP");
+                        alert(data.message || "Phone or Email already registered");
+                        window.location.href = "/seller/signin/";
                     }
                 })
                 .catch(error => {
@@ -287,17 +289,47 @@
         const nextBtn = document.getElementById("to-step-2");
         const nextBtn1 = document.getElementById("to-step-3");
 
+        function validateFields(stepElement) {
+            const inputs = stepElement.querySelectorAll("input[required], textarea[required], select[required]");
+            for (let input of inputs) {
+                if (!input.value.trim()) {
+                    alert(`❌ Please fill out the field: ${input.placeholder || input.name}`);
+                    input.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Step 1 ➝ Step 2 with validation and OTP check
         nextBtn.addEventListener("click", function (e) {
             e.preventDefault();
+
+            if (!validateFields(step1)) {
+                return;
+            }
+
+            if (!otpIsVerified) {
+                alert("❌ Please verify your OTP before continuing.");
+                return;
+            }
+
             step1.style.display = "none";
             step2.style.display = "block";
         });
 
+        // Step 2 ➝ Step 3 with validation
         nextBtn1.addEventListener("click", function (e) {
             e.preventDefault();
+
+            if (!validateFields(step2)) {
+                return;
+            }
+
             step2.style.display = "none";
             step3.style.display = "block";
         });
+
     });
 </script>
 

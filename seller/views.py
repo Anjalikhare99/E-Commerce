@@ -16,9 +16,21 @@ def generate_otp():
 def send_otp(request):
     if request.method == "POST":
         phone = request.POST.get("phone")
+        email = request.POST.get("email")
+
+        # Check if email already exists
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({
+                "status": "error",
+                "message": "Email already registered"
+            })
+
+        if User.objects.filter(phone_number=phone).exists():
+            return JsonResponse({"status": "error", "message": "Phone number already registered."})
+        
         otp = generate_otp()
 
-        user, created = User.objects.get_or_create(phone_number=phone)
+        user, created = User.objects.get_or_create(phone_number=phone, email=email,)
         user.otp = otp
         user.save()
 
@@ -27,6 +39,7 @@ def send_otp(request):
         return JsonResponse({"status": "sent"})
     return JsonResponse({"status": "error"})
 
+@csrf_exempt
 def verify_otp(request):
     if request.method == "POST":
         phone = request.POST.get("phone")
@@ -62,7 +75,7 @@ def seller_signup(request):
 
         if not created and user.role == "S":
             messages.error(request, "You are already registered as a seller.")
-            return redirect("sign-in")
+            return redirect("signin")
         
         if created:
             user.role = "S"
