@@ -18,7 +18,6 @@ def send_otp(request):
         phone = request.POST.get("phone")
         email = request.POST.get("email")
 
-        # Check if email already exists
         if User.objects.filter(email=email).exists():
             return JsonResponse({
                 "status": "error",
@@ -49,14 +48,8 @@ def verify_otp(request):
             user = User.objects.get(phone_number=phone)
         except User.DoesNotExist:
             return JsonResponse({"status": "error", "message": "User not found"})
-
-        # Debugging OTP values
-        print(f"Stored OTP: {user.otp}")
-        print(f"Entered OTP: {entered_otp}")
-
-        # Ensure no leading/trailing spaces are present
-        if str(user.otp) == str(entered_otp):  # Using strip() to remove extra spaces
-            # OTP is verified, clearing the OTP fields in front-end
+        
+        if str(user.otp) == str(entered_otp):
             return JsonResponse({"status": "success", "clear_otp_fields": True})
         else:
             return JsonResponse({"status": "error", "message": "Invalid OTP"})
@@ -69,7 +62,6 @@ def generate_password(length=10):
 def seller_signup(request):
     if request.method == "POST":
         phone = request.POST.get("phone")
-        print(request.POST,"fddddddddddddddddd")
 
         user, created = User.objects.get_or_create(phone_number=phone)
 
