@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from .models import *
+from accounts.models import *
 
 def index(request):
     return render(request, "seller/index.html")
@@ -117,3 +118,18 @@ def seller_signup(request):
 
 def seller_signin(request):
     return render(request, "seller/sign-in.html")
+
+def category(request):
+    if request.method == 'POST':
+        print("llllllllllllllllllll")
+        name = request.POST.get('category_name')
+        description = request.POST.get('category_description')
+
+        if not name:
+            messages.error(request, "Category name is required.")
+            return redirect('category')
+
+        Category.objects.create(name=name, description=description)
+        messages.success(request, "Category added successfully!")
+        return redirect('category') 
+    return render(request, "seller/basic-form-elements.html")
