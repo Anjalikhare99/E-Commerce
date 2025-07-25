@@ -179,11 +179,11 @@ def address(request):
 
     return render(request, 'address.html')
 
-def category_list_view(request):
-    categories = Category.objects.all()
-    return render(request, "category.html", {
-        "categories": categories
-    })
+# def category_list_view(request):
+#     categories = Category.objects.all()
+#     return render(request, "category.html", {
+#         "categories": categories
+#     })
 
 @login_required
 def add_category_view(request):
