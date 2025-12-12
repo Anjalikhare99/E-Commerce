@@ -42,10 +42,10 @@
     <!-- Main Search -->
     <div id="search">
         <button id="close" type="button" class="close btn btn-primary btn-icon btn-icon-mini btn-round">x</button>
-        <form>
+        <div>
             <input type="search" value="" placeholder="Search..." />
             <button type="submit" class="btn btn-primary">Search</button>
-        </form>
+        </div>
     </div>
 
     <!-- Right Icon menu Sidebar -->
@@ -304,7 +304,7 @@
                             class="zmdi zmdi-shopping-cart"></i><span>Category</span></a>
                     <ul class="ml-menu">
                         <li><a href="{% url 'category' %}">Category</a></li>
-                        <li><a href="ec-product-List.html">Category List</a></li>
+                        <li><a href="{% url 'category_list' %}">Category List</a></li>
                     </ul>
                 </li>
                 <li><a href="javascript:void(0);" class="menu-toggle"><i

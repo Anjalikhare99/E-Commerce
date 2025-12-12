@@ -1,0 +1,102 @@
+﻿{% extends "seller/base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="content">
+    <div class="body_scroll">
+        <div class="block-header">
+            <div class="row">
+                <div class="col-lg-7 col-md-6 col-sm-12">
+                    <h2>Category Add</h2>
+                </div>
+                <div class="col-lg-5 col-md-6 col-sm-12">
+                    <button class="btn btn-primary btn-icon float-right right_icon_toggle_btn" type="button">
+                        <i class="zmdi zmdi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% if errors.category_name %}
+        <small style="color:red;">{{ errors.category_name }}</small>
+        {% endif %}
+
+        <div class="container-fluid">
+            <!-- Input -->
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="body">
+                            <form id="categoryForm" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                    <label>Category Name</label>
+                                    <input type="text" id="category_name" name="category_name" class="form-control">
+                                    <small id="error_category_name" style="color:red;"></small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea id="description" name="description" class="form-control"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Category Image</label>
+                                    <input type="file" id="image" name="image" class="form-control">
+                                    <small id="error_image" style="color:red;"></small>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" >Add Category</button>
+                            </form>
+                            <small id="success_message" style="color: green; font-weight: 500;"></small>
+
+                        </div> <!-- body -->
+                    </div> <!-- card -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.getElementById("categoryForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let formData = new FormData(this);
+
+        document.getElementById("error_category_name").innerHTML = "";
+        document.getElementById("error_image").innerHTML = "";
+
+        fetch("{% url 'category' %}", {
+            method: "POST",
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "error") {
+                    if (data.errors.category_name) {
+                        document.getElementById("error_category_name").innerHTML = data.errors.category_name;
+                    }
+                    if (data.errors.image) {
+                        document.getElementById("error_image").innerHTML = data.errors.image;
+                    }
+                }
+                else if (data.status === "success") {
+
+                document.getElementById("success_message").innerHTML =
+                    "Category Created Successfully ✔";
+
+                document.getElementById("category_name").value = "";
+                document.getElementById("description").value = "";
+                document.getElementById("image").value = "";
+
+                setTimeout(() => {
+                    document.getElementById("success_message").innerHTML = "";
+                }, 3000);
+            }
+            });
+    });
+</script>
+
+
+{% endblock %}

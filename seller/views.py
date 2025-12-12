@@ -119,17 +119,38 @@ def seller_signup(request):
 def seller_signin(request):
     return render(request, "seller/sign-in.html")
 
+def category_list_view(request):
+    categories = Category.objects.all()
+    return render(request, "seller/category_list.html", {
+        "categories": categories
+    })
+
+from django.http import JsonResponse
+
 def category(request):
-    if request.method == 'POST':
-        print("llllllllllllllllllll")
-        name = request.POST.get('category_name')
-        description = request.POST.get('category_description')
+    errors = {}
 
-        if not name:
-            messages.error(request, "Category name is required.")
-            return redirect('category')
+    if request.method == "POST":
+        category_name = request.POST.get("category_name", "").strip()
+        description = request.POST.get("description", "").strip()
+        image = request.FILES.get("image")
 
-        Category.objects.create(name=name, description=description)
-        messages.success(request, "Category added successfully!")
-        return redirect('category') 
-    return render(request, "seller/basic-form-elements.html")
+        if not category_name:
+            errors["category_name"] = "Category name is required"
+
+        if not image:
+            errors["image"] = "Category image is required"
+
+        if errors:
+            return JsonResponse({"status": "error", "errors": errors})
+
+        Category.objects.create(
+            category_name=category_name,
+            description=description,
+            image=image,
+            user=request.user
+        )
+
+        return JsonResponse({"status": "success"})
+
+    return render(request, "seller/category_add.html")
