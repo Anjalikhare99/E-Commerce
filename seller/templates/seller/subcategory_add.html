@@ -35,7 +35,6 @@
                                         <option value="{{ category.id }}">{{ category.category_name }}</option>
                                         {% endfor %}
                                     </select>
-                                    <small id="error_category_id" style="color:red;"></small>
                                 </div>
 
 
@@ -43,7 +42,6 @@
                                     <label>Sub-Category Name</label>
                                     <input type="text" id="sub_category_name" name="sub_category_name"
                                         class="form-control">
-                                    <small id="error_sub_category_name" style="color:red;"></small>
                                 </div>
 
                                 <div class="form-group">
@@ -54,13 +52,10 @@
                                 <div class="form-group">
                                     <label>Sub-Category Image</label>
                                     <input type="file" id="image" name="image" class="form-control">
-                                    <small id="error_image" style="color:red;"></small>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Add Sub-Category</button>
                             </form>
-
-                            <small id="success_message" style="color: green; font-weight: 500;"></small>
 
                         </div>
                     </div>
@@ -75,55 +70,48 @@
 
 
 <script>
-    document.getElementById("subCategoryForm").addEventListener("submit", function (e) {
-        e.preventDefault();
+  document.getElementById("subCategoryForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-        let formData = new FormData(this);
+    let formData = new FormData(this);
 
-        document.getElementById("error_category_id").innerHTML = "";
-        document.getElementById("error_sub_category_name").innerHTML = "";
-        document.getElementById("error_image").innerHTML = "";
+    // Clear all <small> error messages dynamically
+    document.querySelectorAll("small[id^='error_']").forEach(el => el.innerHTML = "");
 
-        fetch("{% url 'subcategory' %}", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            }
-        })
-            .then(res => res.json())
-            .then(data => {
+    fetch("{% url 'subcategory' %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
 
-                if (data.status === "error") {
+        if (data.status === "error") {
+            // Loop through all errors
+            for (const [field, message] of Object.entries(data.errors)) {
 
-                    if (data.errors.category_id) {
-                        document.getElementById("error_category_id").innerHTML = data.errors.category_id;
-                    }
-
-                    if (data.errors.sub_category_name) {
-                        document.getElementById("error_sub_category_name").innerHTML = data.errors.sub_category_name;
-                    }
-
-                    if (data.errors.image) {
-                        document.getElementById("error_image").innerHTML = data.errors.image;
-                    }
-
-                } else if (data.status === "success") {
-
-                    document.getElementById("success_message").innerHTML =
-                        "Sub-Category Created Successfully ✔";
-
-                    document.getElementById("category_id").value = "";
-                    document.getElementById("sub_category_name").value = "";
-                    document.getElementById("description").value = "";
-                    document.getElementById("image").value = "";
-
-                    setTimeout(() => {
-                        document.getElementById("success_message").innerHTML = "";
-                    }, 3000);
+                // Display error in small tag if exists
+                const errorElement = document.getElementById(`error_${field}`);
+                if (errorElement) {
+                    errorElement.innerHTML = message;
                 }
-            });
+
+                // Show toastr error
+                toastr.error(message, "Error");
+            }
+        } else if (data.status === "success") {
+            toastr.success("Sub-Category Created Successfully.", "Success");
+
+            // Reset form
+            this.reset();
+            $('.selectpicker').selectpicker('refresh'); // If using selectpicker
+        }
     });
+});
+
+
 </script>
 
 {% endblock %}

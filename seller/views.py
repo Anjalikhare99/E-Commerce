@@ -156,6 +156,12 @@ def category(request):
     return render(request, "seller/category_add.html")
 
 
+def subcategory_list_view(request):
+    subcategories = SubCategory.objects.select_related('category_name').all()
+    return render(request, "seller/subcategory_list.html", {
+        "subcategories": subcategories
+    })
+
 def subcategory(request):
     errors = {}
 

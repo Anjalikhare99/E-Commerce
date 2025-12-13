@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="{% static 'assets/plugins/jvectormap/jquery-jvectormap-2.0.3.css' %}"/>
     <link rel="stylesheet" href="{% static 'assets/plugins/morrisjs/morris.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/css/style.min.css' %}">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
 
 </head>
 
@@ -311,7 +313,7 @@
                             class="zmdi zmdi-shopping-cart"></i><span>Sub-Category</span></a>
                     <ul class="ml-menu">
                         <li><a href="{% url 'subcategory' %}">Sub-Category</a></li>
-                        <li><a href="ec-product-List.html">Sub-Category List</a></li>
+                        <li><a href="{% url 'subcategory_list' %}">Sub-Category List</a></li>
                     </ul>
                 </li>
                 <li><a href="javascript:void(0);" class="menu-toggle"><i
@@ -510,5 +512,8 @@
 <script src="{% static 'assets/js/pages/ecommerce.js' %}"></script>
 <script src="{% static 'assets/js/pages/charts/jquery-knob.min.js' %}"></script>
 <script src="{% static 'assets/js/pages/forms/basic-form-elements.js' %}"></script>
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
 </html>

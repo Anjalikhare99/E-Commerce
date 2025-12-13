@@ -1,0 +1,127 @@
+{% extends "seller/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Sub-Categories | {{ subcategories.count }} Categories</h4>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Category Name</th>
+                    <th>Sub-Category Name</th>
+                    <th>Description</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for subcategory in subcategories %}
+                <tr>
+                    <td>{{ subcategory.created_at|date:"d-m-Y" }}</td>
+                    <td><strong>{{ subcategory.category_name.category_name }}</strong></td>
+                    <td><strong>{{ subcategory.subcategory_name }}</strong></td>
+                    <td>{{ subcategory.description|truncatechars:50 }}</td>
+                    <td class="text-center">
+                        <!-- Edit -->
+                        <button class="btn btn-sm btn-outline-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editModal{{ subcategory.id }}">
+                            ✏️
+                        </button>
+
+                        <!-- Delete -->
+                        <button class="btn btn-sm btn-outline-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal{{ subcategory.id }}">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editModal{{ subcategory.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" enctype="multipart/form-data" action="#">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5>Edit Sub-Category</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label>Category</label>
+                                        <select name="category_name" class="form-control">
+                                            {% for category in categories %}
+                                                <option value="{{ category.id }}" {% if category.id == subcategory.category_name.id %}selected{% endif %}>
+                                                    {{ category.category_name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label>Sub-Category Name</label>
+                                        <input type="text" name="subcategory_name" class="form-control"
+                                               value="{{ subcategory.subcategory_name }}">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label>Description</label>
+                                        <textarea name="description" class="form-control">{{ subcategory.description }}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal{{ subcategory.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="#">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5>Delete Sub-Category</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    Are you sure you want to delete
+                                    <strong>{{ subcategory.subcategory_name }}</strong>?
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No sub-categories found</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
