@@ -154,3 +154,49 @@ def category(request):
         return JsonResponse({"status": "success"})
 
     return render(request, "seller/category_add.html")
+
+
+def subcategory(request):
+    errors = {}
+
+    if request.method == "POST":
+        category_id = request.POST.get("category_id", "").strip()
+        sub_category_name = request.POST.get("sub_category_name", "").strip()
+        description = request.POST.get("description", "").strip()
+
+        if not category_id:
+            errors["category"] = "Category is required"
+
+        if not sub_category_name:
+            errors["sub_category_name"] = "Sub-category name is required"
+
+        if errors:
+            return JsonResponse({
+                "status": "error",
+                "errors": errors
+            })
+
+        try:
+            category = Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "errors": {"category": "Invalid category"}
+            })
+
+        SubCategory.objects.create(
+            category_name=category,
+            subcategory_name=sub_category_name,
+            description=description
+        )
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Sub-category added successfully"
+        })
+
+    categories = Category.objects.all()
+
+    return render(request, "seller/subcategory_add.html", {
+        "categories": categories
+    }) 

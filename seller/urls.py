@@ -9,4 +9,5 @@ urlpatterns = [
     path('signin/', seller_signin, name="signin"),
     path('category/', category, name="category"),
     path('categorys/', category_list_view, name='category_list'),
+    path('subcategory/', subcategory, name="subcategory"),
 ]
