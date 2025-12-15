@@ -77,5 +77,20 @@ class SubCategory(models.Model):
     def __str__(self):
         return self.subcategory_name
     
+class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name='products', null=True)
+    subcategory_name = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, related_name='products', null=True)
+    product_name = models.CharField(max_length=100)
+    description = models.JSONField()
+    price = models.FloatField()
+    stock = models.IntegerField()
+    image = models.ImageField(upload_to="product_images/")
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.product_name
+
 
     

@@ -22,6 +22,11 @@
     <link rel="stylesheet" href="{% static 'assets/plugins/jvectormap/jquery-jvectormap-2.0.3.css' %}"/>
     <link rel="stylesheet" href="{% static 'assets/plugins/morrisjs/morris.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/css/style.min.css' %}">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    
+    <!-- Bootstrap Select -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css">
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
 
@@ -319,7 +324,7 @@
                 <li><a href="javascript:void(0);" class="menu-toggle"><i
                             class="zmdi zmdi-shopping-cart"></i><span>Product</span></a>
                     <ul class="ml-menu">
-                        <li><a href="ec-product.html">Product</a></li>
+                        <li><a href="{% url 'product_add' %}">Product</a></li>
                         <li><a href="ec-product-List.html">Product List</a></li>
                         <li><a href="ec-product-detail.html">Product detail</a></li>
                     </ul>
