@@ -27,6 +27,10 @@
     
     <!-- Bootstrap Select -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css">
+
+    <link rel="stylesheet" href="assets/plugins/footable-bootstrap/css/footable.bootstrap.min.css">
+    <link rel="stylesheet" href="assets/plugins/footable-bootstrap/css/footable.standalone.min.css">
+
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
 
@@ -325,7 +329,7 @@
                             class="zmdi zmdi-shopping-cart"></i><span>Product</span></a>
                     <ul class="ml-menu">
                         <li><a href="{% url 'product_add' %}">Product</a></li>
-                        <li><a href="ec-product-List.html">Product List</a></li>
+                        <li><a href="{% url 'product_list' %}">Product List</a></li>
                         <li><a href="ec-product-detail.html">Product detail</a></li>
                     </ul>
                 </li>
@@ -517,6 +521,8 @@
 <script src="{% static 'assets/js/pages/ecommerce.js' %}"></script>
 <script src="{% static 'assets/js/pages/charts/jquery-knob.min.js' %}"></script>
 <script src="{% static 'assets/js/pages/forms/basic-form-elements.js' %}"></script>
+<script src="assets/bundles/footable.bundle.js"></script> <!-- Lib Scripts Plugin Js -->
+<script src="assets/js/pages/tables/footable.js"></script>
 <!-- Toastr JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 

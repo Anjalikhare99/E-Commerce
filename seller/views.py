@@ -235,7 +235,11 @@ def parse_description(text):
 
     return data
 
-
+def product_list_view(request):
+    products = Product.objects.select_related('category', 'subcategory_name').all()
+    return render(request, "seller/product_list.html", {
+        "products": products
+    })
 def product(request):
     if request.method =="POST":
         category_id = request.POST.get("category_id", "").strip()
