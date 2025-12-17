@@ -20,3 +20,9 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('product_name', 'category', 'subcategory_name', 'price', 'stock', 'user', 'created_at', 'update_at')
     search_fields = ('product_name', 'category__category_name', 'subcategory_name__subcategory_name', 'user__username')
     list_filter = ('created_at',)
+
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    list_display = ('product', 'is_primary', 'created_at', 'update_at')
+    search_fields = ('product__product_name',)
+    list_filter = ('created_at',)

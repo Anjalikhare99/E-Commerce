@@ -71,7 +71,15 @@
                                 <!-- Image -->
                                 <div class="form-group">
                                     <label>Product Image</label>
-                                    <input type="file" name="image" class="form-control">
+                                    <div id="image-wrapper">
+                                        <div class="d-flex mb-2 image-row">
+                                            <input type="file" name="images" class="form-control me-2" required>
+
+                                            <button type="button" class="btn btn-success add-image">
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">
@@ -87,6 +95,37 @@
 </section>
 
 <script>
+    document.addEventListener("click", function (e) {
+
+        // ➕ Add new image input
+        if (e.target.classList.contains("add-image")) {
+            let wrapper = document.getElementById("image-wrapper");
+
+            // Count current image inputs
+            let currentImages = wrapper.querySelectorAll("input[type='file']").length;
+
+            if (currentImages >= 5) {
+                alert("You can upload maximum 5 images");
+                return;
+            }
+
+            let div = document.createElement("div");
+            div.classList.add("d-flex", "mb-2", "image-row");
+
+            div.innerHTML = `
+                <input type="file" name="images" class="form-control me-2" required>
+                <button type="button" class="btn btn-danger remove-image">−</button>
+            `;
+
+            wrapper.appendChild(div);
+        }
+
+        // ❌ Remove image input
+        if (e.target.classList.contains("remove-image")) {
+            e.target.closest(".image-row").remove();
+        }
+    });
+
     document.getElementById("productForm").addEventListener("submit", function (e) {
         e.preventDefault();
 
@@ -105,15 +144,27 @@
             .then(data => {
                 if (data.status === "error") {
                     for (const [field, message] of Object.entries(data.errors)) {
-                        
+
                         toastr.error(message, "Error");
                     }
                 }
                 else if (data.status === "success") {
-                    document.getElementById("success_message").innerText =
-                        "Product Added Successfully ✔";
+                    toastr.success("Product Added Successfully.", "Success");
                     this.reset();
                 }
+
+                // Reset the category and subcategory select boxes to their default option
+                document.getElementById("category_id").value = "";
+                document.getElementById("sub_category_id").value = "";
+
+                // Optionally reset any added image inputs if needed
+                let imageWrapper = document.getElementById("image-wrapper");
+                imageWrapper.innerHTML = `
+                    <div class="d-flex mb-2 image-row">
+                        <input type="file" name="images" class="form-control me-2" required>
+                        <button type="button" class="btn btn-success add-image">+</button>
+                    </div>
+                `;
             });
     });
 </script>

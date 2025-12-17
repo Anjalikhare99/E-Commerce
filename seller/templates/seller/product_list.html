@@ -9,7 +9,8 @@
                 <div class="col-lg-7 col-md-6 col-sm-12">
                     <h2>Product List</h2>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html"><i class="zmdi zmdi-home"></i> Aero</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="zmdi zmdi-home"></i> Aero</a>
+                        </li>
                         <li class="breadcrumb-item">eCommerce</li>
                         <li class="breadcrumb-item active">Product List</li>
                     </ul>
@@ -42,12 +43,14 @@
                                     {% for product in products %}
                                     <tr>
                                         <td>
-                                            {% if product.image %}
-                                            <img src="{{ product.image.url }}" width="48" alt="Product img">
+                                            {% with primary=product.images.all|dictsort:"is_primary"|first %}
+                                            {% if primary %}
+                                            <img src="{{ primary.image.url }}" alt="{{ product.product_name }}"
+                                                width="48">
                                             {% else %}
-                                        <td><img src="{% static 'assets/images/ecommerce/1.png' %}" width="48"
-                                                alt="Product img"></td>
-                                        {% endif %}
+                                            <img src="{% static 'images/default.png' %}" alt="No image" width="48">
+                                            {% endif %}
+                                            {% endwith %}
 
                                         </td>
 
@@ -58,7 +61,7 @@
                                         <td>${{ product.price }}</td>
                                         <td><span class="col-green">In Stock</span></td>
                                         <td>
-                                            <a href="javascript:void(0);"
+                                            <a href="{% url 'product_detail' product.id %}"
                                                 class="btn btn-default waves-effect waves-float btn-sm waves-green"><i
                                                     class="zmdi zmdi-edit"></i></a>
                                             <a href="javascript:void(0);"

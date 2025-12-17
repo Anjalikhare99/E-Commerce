@@ -236,7 +236,7 @@ def parse_description(text):
     return data
 
 def product_list_view(request):
-    products = Product.objects.select_related('category', 'subcategory_name').all()
+    products = Product.objects.select_related('category', 'subcategory_name').prefetch_related('images').all()
     return render(request, "seller/product_list.html", {
         "products": products
     })
@@ -248,7 +248,7 @@ def product(request):
         description = request.POST.get("description", "").strip()
         price = request.POST.get("price", "").strip()
         stock = request.POST.get("stock", "").strip()
-        image = request.FILES.get("image")
+        image = request.FILES.getlist("images")
 
         errors = {}
 
@@ -293,17 +293,34 @@ def product(request):
                 "errors": {"category": "Invalid category or sub-category"}
             })
 
-        Product.objects.create(
+        product = Product.objects.create(
             user=request.user,
             category=category,
             subcategory_name=subcategory,
             product_name=product_name,
             description=description_dict,
             price=price,
-            stock=stock,
-            image=image
+            stock=stock
         )
+
+        for index, img in enumerate(image):
+            ProductImage.objects.create(
+                product=product,
+                image=img,
+                is_primary=True if index == 0 else False
+            )
 
         return JsonResponse({"status": "success", "message": "Product added successfully"})
     return render(request, "seller/product_add.html", { "categories": Category.objects.all(),
         "subcategories": SubCategory.objects.all()})
+
+def product_edit_view(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        messages.error(request, "Product not found.")
+        return redirect("product_list")
+
+    return render(request, "seller/product_details.html", {
+        "product": product
+    })

@@ -85,12 +85,20 @@ class Product(models.Model):
     description = models.JSONField()
     price = models.FloatField()
     stock = models.IntegerField()
-    image = models.ImageField(upload_to="product_images/")
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.product_name
 
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to="product_images/")
+    is_primary = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Image for {self.product.product_name}"
 
     
