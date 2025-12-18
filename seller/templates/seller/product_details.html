@@ -149,4 +149,124 @@
     </div>
 </section>
 
+
+<section class="content">
+    <div class="body_scroll">
+        <div class="block-header">
+            <div class="row">
+                <div class="col-lg-7 col-md-6 col-sm-12">
+                    <h2>Product Detail</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="zmdi zmdi-home"></i> Aero</a>
+                        </li>
+                        <li class="breadcrumb-item">eCommerce</li>
+                        <li class="breadcrumb-item active">Product Detail</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row clearfix">
+                <!-- Product Images -->
+                <div class="col-xl-3 col-lg-4 col-md-12">
+                    <div class="preview preview-pic tab-content">
+                        {% for img in product.images.all %}
+                        <div class="tab-pane {% if forloop.first %}active{% endif %}"
+                            id="product_{{ forloop.counter }}">
+                            <img src="{{ img.image.url }}" class="img-fluid" alt="{{ product.product_name }}" />
+                        </div>
+                        {% empty %}
+                        <div class="tab-pane active" id="product_1">
+                            <img src="{% static 'images/default.png' %}" class="img-fluid" alt="No image" />
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <ul class="preview thumbnail nav nav-tabs">
+                        {% for img in product.images.all %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if forloop.first %}active{% endif %}" data-toggle="tab"
+                                href="#product_{{ forloop.counter }}">
+                                <img src="{{ img.image.url }}" alt="" />
+                            </a>
+                        </li>
+                        {% endfor %}
+                        {% if product.images.count == 0 %}
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#product_1">
+                                <img src="{% static 'images/default.png' %}" alt="" />
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Product Details -->
+                <div class="col-xl-9 col-lg-8 col-md-12">
+                    <div class="product details">
+                        <h3 class="product-title mb-0">{{ product.product_name }}</h3>
+                        <h5 class="price mt-0">Current Price: <span class="col-amber">${{ product.price }}</span></h5>
+                        <div class="rating">
+                            <div class="stars">
+                                {% for i in "12345" %}
+                                {% if forloop.counter <= 4 %} <span class="zmdi zmdi-star col-amber"></span>
+                                    {% else %}
+                                    <span class="zmdi zmdi-star-outline"></span>
+                                    {% endif %}
+                                    {% endfor %}
+                            </div>
+                            <span class="m-l-10">41 reviews</span>
+                        </div>
+                        <hr>
+                        <p class="product-description">{{ product.short_description }}</p>
+                        <p class="vote"><strong>78%</strong> of buyers enjoyed this product! <strong>(23 votes)</strong>
+                        </p>
+
+                        <div class="action">
+                            <button class="btn btn-primary waves-effect" type="button">ADD TO CART</button>
+                            <button class="btn btn-info waves-effect" type="button"><i
+                                    class="zmdi zmdi-favorite"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="row clearfix mt-4">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="body">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item"><a class="nav-link active" data-toggle="tab"
+                                        href="#description">Description</a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#review">Review</a>
+                                </li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#about">About</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="description">
+                                    <p>{{ product.description }}</p>
+                                </div>
+                                <div class="tab-pane" id="review">
+                                    <p>No reviews yet.</p>
+                                </div>
+                                <div class="tab-pane" id="about">
+                                    <p>Category: {{ product.category.category_name }}</p>
+                                    <p>Subcategory: {{ product.subcategory_name.subcategory_name }}</p>
+                                    <p>Stock: {{ product.stock }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock %}

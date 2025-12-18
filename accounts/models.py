@@ -83,6 +83,7 @@ class Product(models.Model):
     subcategory_name = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, related_name='products', null=True)
     product_name = models.CharField(max_length=100)
     description = models.JSONField()
+    short_description = models.CharField(max_length=255, null=True, blank=True)
     price = models.FloatField()
     stock = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)

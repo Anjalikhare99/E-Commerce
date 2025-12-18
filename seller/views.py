@@ -314,7 +314,7 @@ def product(request):
     return render(request, "seller/product_add.html", { "categories": Category.objects.all(),
         "subcategories": SubCategory.objects.all()})
 
-def product_edit_view(request, product_id):
+def product_detail_view(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
@@ -323,4 +323,81 @@ def product_edit_view(request, product_id):
 
     return render(request, "seller/product_details.html", {
         "product": product
+    })
+
+def product_edit_view(request, product_id):
+    try:
+        product = Product.objects.prefetch_related('images').get(id=product_id)
+    except Product.DoesNotExist:
+        messages.error(request, "Product not found.")
+        return redirect("product_list")
+
+    if request.method == "POST":
+        category_id = request.POST.get("category_id", "").strip()
+        subcategory_id = request.POST.get("sub_category_id", "").strip()
+        product_name = request.POST.get("product_name", "").strip()
+        description = request.POST.get("description", "").strip()
+        price = request.POST.get("price", "").strip()
+        stock = request.POST.get("stock", "").strip()
+        images = request.FILES.getlist("images")
+
+        errors = {}
+
+        if not category_id:
+            errors["category"] = "Category is required"
+        if not subcategory_id:
+            errors["subcategory_name"] = "Sub-category is required"
+        if not product_name:
+            errors["product_name"] = "Product name is required"
+        if not price:
+            errors["price"] = "Price is required"
+        if not stock:
+            errors["stock"] = "Stock is required"
+        if not description:
+            errors["description"] = "Description is required"
+
+        try:
+            description_dict = parse_description(description)
+        except Exception:
+            errors["description"] = "Invalid description format"
+
+        if "price" in description_dict and description_dict["price"] <= 0:
+            errors["description"] = "Price must be greater than 0"
+
+        if errors:
+            return JsonResponse({"status": "error", "errors": errors})
+
+        # Update product fields
+        product.product_name = product_name
+        product.description = description_dict
+        product.price = price
+        product.stock = stock
+
+        # Update category and subcategory
+        try:
+            product.category = Category.objects.get(id=category_id)
+            product.subcategory_name = SubCategory.objects.get(id=subcategory_id)
+        except (Category.DoesNotExist, SubCategory.DoesNotExist):
+            return JsonResponse({
+                "status": "error",
+                "errors": {"category": "Invalid category or sub-category"}
+            })
+
+        product.save()
+
+        # Handle new images (optional: you can choose to delete old images or keep them)
+        for index, img in enumerate(images):
+            ProductImage.objects.create(
+                product=product,
+                image=img,
+                is_primary=True if index == 0 else False
+            )
+
+        return JsonResponse({"status": "success", "message": "Product updated successfully"})
+
+    # GET request → prefill form
+    return render(request, "seller/product_edit.html", {
+        "product": product,
+        "categories": Category.objects.all(),
+        "subcategories": SubCategory.objects.all()
     })

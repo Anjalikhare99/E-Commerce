@@ -1,0 +1,154 @@
+{% extends "seller/base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="content">
+    <div class="body_scroll">
+        <div class="block-header">
+            <div class="row">
+                <div class="col-lg-7 col-md-6 col-sm-12">
+                    <h2>Edit Product</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="body">
+
+                            <form id="productForm" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <!-- Category -->
+                                <div class="form-group">
+                                    <label>Category Name</label>
+                                    <select id="category_id" name="category_id" data-width="100%" class="form-control">
+                                        <option value="">-- Select Category --</option>
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}" {% if product.category.id == category.id %}selected{% endif %}>
+                                            {{ category.category_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <!-- Sub Category -->
+                                <div class="form-group">
+                                    <label>Sub Category</label>
+                                    <select id="sub_category_id" name="sub_category_id" data-width="100%" class="form-control">
+                                        <option value="">-- Select Sub Category --</option>
+                                        {% for subcategory in subcategories %}
+                                        <option value="{{ subcategory.id }}" {% if product.subcategory_name.id == subcategory.id %}selected{% endif %}>
+                                            {{ subcategory.subcategory_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <!-- Product Name -->
+                                <div class="form-group">
+                                    <label>Product Name</label>
+                                    <input type="text" name="product_name" class="form-control" value="{{ product.product_name }}">
+                                </div>
+
+                                <!-- Description -->
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea name="description" class="form-control" placeholder="price=5500, color=red, size=M">{{ product.description }}</textarea>
+                                </div>
+
+                                <!-- Price -->
+                                <div class="form-group">
+                                    <label>Price</label>
+                                    <input type="number" step="0.01" name="price" class="form-control" value="{{ product.price }}">
+                                </div>
+
+                                <!-- Stock -->
+                                <div class="form-group">
+                                    <label>Stock</label>
+                                    <input type="number" name="stock" class="form-control" value="{{ product.stock }}">
+                                </div>
+
+                                <!-- Images -->
+                                <div class="form-group">
+                                    <label>Product Images</label>
+                                    <div id="image-wrapper">
+                                        {% for img in product.images.all %}
+                                        <div class="d-flex mb-2 image-row">
+                                            <img src="{{ img.image.url }}" width="50" class="me-2">
+                                            <input type="file" name="images" class="form-control me-2">
+                                            <button type="button" class="btn btn-danger remove-image">−</button>
+                                        </div>
+                                        {% endfor %}
+                                        {% if product.images.count == 0 %}
+                                        <div class="d-flex mb-2 image-row">
+                                            <input type="file" name="images" class="form-control me-2">
+                                            <button type="button" class="btn btn-success add-image">+</button>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Edit Product</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("click", function(e) {
+    // ➕ Add new image input
+    if (e.target.classList.contains("add-image")) {
+        let wrapper = document.getElementById("image-wrapper");
+        let currentImages = wrapper.querySelectorAll("input[type='file']").length;
+        if (currentImages >= 5) {
+            alert("You can upload maximum 5 images");
+            return;
+        }
+        let div = document.createElement("div");
+        div.classList.add("d-flex", "mb-2", "image-row");
+        div.innerHTML = `
+            <input type="file" name="images" class="form-control me-2" required>
+            <button type="button" class="btn btn-danger remove-image">−</button>
+        `;
+        wrapper.appendChild(div);
+    }
+
+    // ❌ Remove image input
+    if (e.target.classList.contains("remove-image")) {
+        e.target.closest(".image-row").remove();
+    }
+});
+
+document.getElementById("productForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    let formData = new FormData(this);
+
+    fetch("{% url 'product_edit' product.id %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "error") {
+            for (const [field, message] of Object.entries(data.errors)) {
+                toastr.error(message, "Error");
+            }
+        } else if (data.status === "success") {
+            toastr.success(data.message, "Success");
+        }
+    });
+});
+</script>
+
+{% endblock %}

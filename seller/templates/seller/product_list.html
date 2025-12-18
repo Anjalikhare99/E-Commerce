@@ -62,6 +62,9 @@
                                         <td><span class="col-green">In Stock</span></td>
                                         <td>
                                             <a href="{% url 'product_detail' product.id %}"
+                                                class="btn btn-info waves-effect waves-float btn-sm waves-blue">
+                                                <i class="zmdi zmdi-eye"></i></a>
+                                            <a href="{% url 'product_edit' product.id %}"
                                                 class="btn btn-default waves-effect waves-float btn-sm waves-green"><i
                                                     class="zmdi zmdi-edit"></i></a>
                                             <a href="javascript:void(0);"
