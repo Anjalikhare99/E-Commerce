@@ -3,6 +3,7 @@ import string
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .models import *
 from accounts.models import *
@@ -117,6 +118,24 @@ def seller_signup(request):
     return render(request, "seller/sign-up.html")
 
 def seller_signin(request):
+    if request.method == "POST":
+        phone = request.POST.get("phone")
+        password = request.POST.get("password")
+
+        user = authenticate(request, phone_number=phone, password=password)
+
+        if user is not None:
+            if user.role != "S":
+                messages.error(request, "You are not registered as a seller.")
+                return redirect("signin")
+
+            login(request, user)
+            messages.success(request, "Logged in successfully.")
+            return redirect("index")  # or seller dashboard
+        else:
+            messages.error(request, "Invalid phone number or password.")
+            return redirect("signin")
+
     return render(request, "seller/sign-in.html")
 
 def category_list_view(request):
