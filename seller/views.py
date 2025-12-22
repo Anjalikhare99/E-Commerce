@@ -33,6 +33,9 @@ def send_otp(request):
 
         user, created = User.objects.get_or_create(phone_number=phone, email=email,)
         user.otp = otp
+        password = generate_password()
+        user.set_password(password)
+        print("Password for new seller:", password)
         user.save()
 
         print("OTP for", phone, "is", otp)
@@ -75,8 +78,10 @@ def seller_signup(request):
             user.role = "S"
             password = generate_password()
             user.set_password(password)
+            user.name = store_name = request.POST.get("store_name")
             user.save()
             print("Password for new seller:", password)
+            print("Created new user:", created)
         elif user.role != "S":
             user.role = "S"
             user.save()
@@ -113,7 +118,7 @@ def seller_signup(request):
         )
 
         messages.success(request, "Seller registered successfully.")
-        return redirect("index")
+        return redirect("signin")
 
     return render(request, "seller/sign-up.html")
 

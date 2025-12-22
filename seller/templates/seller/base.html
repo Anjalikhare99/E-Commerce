@@ -19,20 +19,21 @@
 
     <link rel="stylesheet" href="{% static 'assets/plugins/morrisjs/morris.min.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap-select/css/bootstrap-select.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/plugins/jvectormap/jquery-jvectormap-2.0.3.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/plugins/jvectormap/jquery-jvectormap-2.0.3.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/plugins/morrisjs/morris.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/css/style.min.css' %}">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    
+
     <!-- Bootstrap Select -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css">
 
     <link rel="stylesheet" href="assets/plugins/footable-bootstrap/css/footable.bootstrap.min.css">
     <link rel="stylesheet" href="assets/plugins/footable-bootstrap/css/footable.standalone.min.css">
 
     <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
 </head>
 
@@ -41,8 +42,8 @@
     <!-- Page Loader -->
     <div class="page-loader-wrapper">
         <div class="loader">
-            <div class="m-t-30"><img class="zmdi-hc-spin" src="{% static 'assets/images/loader.svg' %}" width="48" height="48"
-                    alt="Aero"></div>
+            <div class="m-t-30"><img class="zmdi-hc-spin" src="{% static 'assets/images/loader.svg' %}" width="48"
+                    height="48" alt="Aero"></div>
             <p>Please wait...</p>
         </div>
     </div>
@@ -288,7 +289,7 @@
                         class="zmdi zmdi-group-work"></i></a></li>
             <li><a href="javascript:void(0);" class="js-right-sidebar" title="Setting"><i
                         class="zmdi zmdi-settings zmdi-hc-spin"></i></a></li>
-            <li><a href="sign-in.html" class="mega-menu" title="Sign Out"><i class="zmdi zmdi-power"></i></a></li>
+            <li><a href="{% url 'logout' %}" class="mega-menu" title="Sign Out"><i class="zmdi zmdi-power"></i></a></li>
         </ul>
     </div>
 
@@ -303,10 +304,15 @@
             <ul class="list">
                 <li>
                     <div class="user-info">
-                        <a class="image" href="profile.html"><img src="{% static 'assets/images/profile_av.jpg' %}" alt="User"></a>
+                        <a class="image" href="profile.html"><img src="{% static 'assets/images/profile_av.jpg' %}"
+                                alt="User"></a>
                         <div class="detail">
-                            <h4>{{ user.name }}</h4>
+                            <h4>{{ request.user.name }}</h4>
+                            {% if request.user.role == "S" %}
+                            <small>Seller</small>
+                            {% else %}
                             <small>Admin</small>
+                            {% endif %}
                         </div>
                     </div>
                 </li>
@@ -433,7 +439,8 @@
                             <li class="online">
                                 <a href="javascript:void(0);">
                                     <div class="media">
-                                        <img class="media-object " src="{% static 'assets/images/xs/avatar4.jpg' %}" alt="">
+                                        <img class="media-object " src="{% static 'assets/images/xs/avatar4.jpg' %}"
+                                            alt="">
                                         <div class="media-body">
                                             <span class="name">Sophia <small class="float-right">11:00AM</small></span>
                                             <span class="message">There are many variations of passages of Lorem Ipsum
@@ -446,7 +453,8 @@
                             <li class="online">
                                 <a href="javascript:void(0);">
                                     <div class="media">
-                                        <img class="media-object " src="{% static 'assets/images/xs/avatar5.jpg' %}" alt="">
+                                        <img class="media-object " src="{% static 'assets/images/xs/avatar5.jpg' %}"
+                                            alt="">
                                         <div class="media-body">
                                             <span class="name">Grayson <small class="float-right">11:30AM</small></span>
                                             <span class="message">All the Lorem Ipsum generators on the</span>
@@ -458,7 +466,8 @@
                             <li class="offline">
                                 <a href="javascript:void(0);">
                                     <div class="media">
-                                        <img class="media-object " src="{% static 'assets/images/xs/avatar2.jpg' %}" alt="">
+                                        <img class="media-object " src="{% static 'assets/images/xs/avatar2.jpg' %}"
+                                            alt="">
                                         <div class="media-body">
                                             <span class="name">Isabella <small
                                                     class="float-right">11:31AM</small></span>
@@ -471,7 +480,8 @@
                             <li class="me">
                                 <a href="javascript:void(0);">
                                     <div class="media">
-                                        <img class="media-object " src="{% static 'assets/images/xs/avatar1.jpg' %}" alt="">
+                                        <img class="media-object " src="{% static 'assets/images/xs/avatar1.jpg' %}"
+                                            alt="">
                                         <div class="media-body">
                                             <span class="name">John <small class="float-right">05:00PM</small></span>
                                             <span class="message">It is a long established fact that a reader</span>
@@ -483,7 +493,8 @@
                             <li class="online">
                                 <a href="javascript:void(0);">
                                     <div class="media">
-                                        <img class="media-object " src="{% static 'assets/images/xs/avatar3.jpg' %}" alt="">
+                                        <img class="media-object " src="{% static 'assets/images/xs/avatar3.jpg' %}"
+                                            alt="">
                                         <div class="media-body">
                                             <span class="name">Alexander <small
                                                     class="float-right">06:08PM</small></span>
