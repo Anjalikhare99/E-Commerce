@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .models import *
 from accounts.models import *
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     return render(request, "seller/index.html")
@@ -149,6 +150,7 @@ def category_list_view(request):
         "categories": categories
     })
 
+@login_required
 def category(request):
     errors = {}
 
