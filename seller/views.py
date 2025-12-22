@@ -144,12 +144,10 @@ def seller_signin(request):
     return render(request, "seller/sign-in.html")
 
 def category_list_view(request):
-    categories = Category.objects.all()
+    categories = Category.objects.filter(user=request.user)
     return render(request, "seller/category_list.html", {
         "categories": categories
     })
-
-from django.http import JsonResponse
 
 def category(request):
     errors = {}
@@ -181,7 +179,7 @@ def category(request):
 
 
 def subcategory_list_view(request):
-    subcategories = SubCategory.objects.select_related('category_name').all()
+    subcategories = SubCategory.objects.select_related('category_name').filter(category_name__user=request.user)
     return render(request, "seller/subcategory_list.html", {
         "subcategories": subcategories
     })
@@ -260,7 +258,7 @@ def parse_description(text):
     return data
 
 def product_list_view(request):
-    products = Product.objects.select_related('category', 'subcategory_name').prefetch_related('images').all()
+    products = Product.objects.select_related('category', 'subcategory_name').prefetch_related('images').filter(user=request.user)
     return render(request, "seller/product_list.html", {
         "products": products
     })
