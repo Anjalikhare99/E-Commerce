@@ -130,7 +130,7 @@ def seller_signin(request):
         user = authenticate(request, phone_number=phone, password=password)
 
         if user is not None:
-            if user.role != "S":
+            if user.role != "S" and not user.is_superuser:
                 messages.error(request, "You are not registered as a seller.")
                 return redirect("signin")
 
