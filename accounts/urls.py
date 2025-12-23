@@ -15,5 +15,6 @@ urlpatterns = [
     path('checkout/', checkout, name='checkout'),
     path('dashboard/', dashboard, name='dashboard'),
     path('products/', products, name='products'),
+    path('product/', product_detail, name='product_detail'),
     path('oauth/', include('social_django.urls', namespace='social')),
 ]
