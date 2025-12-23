@@ -85,6 +85,7 @@ def seller_signup(request):
             print("Created new user:", created)
         elif user.role != "S":
             user.role = "S"
+            user.name = store_name = request.POST.get("store_name")
             user.save()
 
         display_name = request.POST.get("display_name")
