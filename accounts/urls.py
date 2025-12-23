@@ -1,6 +1,6 @@
 from django.urls import path, include
 from accounts.views import *
-
+app_name = 'accounts'
 urlpatterns = [
     path("", index, name="index"),
     path("signup/", signup_view, name="signup"),

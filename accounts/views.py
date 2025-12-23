@@ -175,7 +175,7 @@ def address(request):
             country=country,
             landmark=landmark
         )
-        return redirect('address')  # Or wherever you want to go after saving
+        return redirect('accounts:address')  # Or wherever you want to go after saving
 
     return render(request, 'address.html')
 

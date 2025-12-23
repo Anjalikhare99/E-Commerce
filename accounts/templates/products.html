@@ -16,7 +16,7 @@
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
         <div class="container">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'accounts:index' %}">Home</a></li>
                 <li class="breadcrumb-item"><a href="elements-list.html">Elements</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Products</li>
             </ol>
@@ -104,7 +104,7 @@
                             <div class="product-cat">
                                 <a href="#">Men</a>
                             </div><!-- End .product-cat -->
-                            <h3 class="product-title"><a href="{% url 'products' %}">Vestibulum auctor</a></h3>
+                            <h3 class="product-title"><a href="{% url 'accounts:products' %}">Vestibulum auctor</a></h3>
                             <!-- End .product-title -->
                             <div class="product-price">
                                 $120.00
@@ -146,7 +146,7 @@
                             <div class="product-cat">
                                 <a href="#">Accessories</a>
                             </div><!-- End .product-cat -->
-                            <h3 class="product-title"><a href="{% url 'products' %}">Nunc dignissim risus</a></h3>
+                            <h3 class="product-title"><a href="{% url 'accounts:products' %}">Nunc dignissim risus</a></h3>
                             <!-- End .product-title -->
                             <div class="product-price">
                                 <span class="out-price">$32.00</span>
